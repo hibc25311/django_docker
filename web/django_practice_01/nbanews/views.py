@@ -3,8 +3,11 @@ from nbanews.models import NbaNews
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_events
 from nbanews.beautifulsoup import collectNews
+from django.http import HttpResponse
 
 # Create your views here.
+def index(request):
+    return HttpResponse("I am Django 3.1 !!!")
 
 def nbanews(request):
     last_ten_news = NbaNews.objects.all().order_by('-id')[:10]

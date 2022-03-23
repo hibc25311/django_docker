@@ -1,0 +1,43 @@
+version: '3.8'
+
+services: 
+    db:
+        image: postgres:12
+        container_name: django_practice_01_db
+        restart: always
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_USER=django_practice_01
+            - POSTGRES_DB=django_practice_01
+            - POSTGRES_PASSWORD=django_practice_01
+    web:
+        build: ./web
+        container_name: django_practice_01_web
+        restart: always
+        command: [ "../wait-for-it.sh", "db:5432", "--", "/bin/bash", "-c", "uwsgi --ini uwsgi.ini" ]
+        volumes:
+            # Using for production that could share the named volume for other services.
+            - web_data:/web/django_practice_01
+        environment:
+            - PYTHONUNBUFFERED=TRUE
+            - DATABASE_NAME=django_practice_01
+            - DATABASE_USER=django_practice_01
+            - DB_HOST=db
+    nginx:
+        build: ./nginx
+        container_name: django_practice_01_nginx
+        restart: always
+        volumes:
+            # Using the named volume from the Django project.
+            - web_data:/web/django_practice_01
+             # Bind the nginx's log into host machine.
+            - ./nginx/logs:/var/log/nginx
+        ports:
+            - "127.0.0.1:8000:80"
+        depends_on:
+            - web
+
+volumes:
+    pg_data:
+    web_data:
