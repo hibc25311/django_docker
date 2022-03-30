@@ -1,23 +1,38 @@
-{% extends 'main/base.html' %}
-{% block title %}View list{% endblock %}
+{% extends 'main/base.html' %} {% block title %}View list{% endblock %} {% block
+content %}
+<h1>{{todolist.name}}</h1>
+<form method="POST" action="#">
+  {% csrf_token %}
 
-{% block content %}
-   <h1>{{todolist.name}}</h1>
-      <form method="POST" action="#">
-         {% csrf_token %}
-         <ul>
-            {% for item in todolist.item_set.all %}
-               {% if item.complete == True %}
-                  <li><input type="checkbox", name="check_{{item.id}}", value="doneList" name="createItem" checked>{{item.text}}</li>
-               {% else %}
-                  <li><input type="checkbox", name="check_{{item.id}}", value="doneList" name="createItem">{{item.text}}</li>
-               {% endif %}
-            {% endfor %}
-         </ul>
-         <button type="submit", name="save", value="save">Save ToDoList</button>
-         <input type="text", name="createItem">
-         <button type="submit", name="addItem", value="addItem">Add item</button>
-      </form>
-   
+  <ul>
+    {% for item in todolist.item_set.all %} {% if item.complete == True %}
+    <li>
+      <input
+        type="checkbox"
+        ,
+        name="check_{{item.id}}"
+        ,
+        value="doneList"
+        name="createItem"
+        checked
+      />{{item.text}}
+    </li>
+    {% else %}
+    <li>
+      <input
+        type="checkbox"
+        ,
+        name="check_{{item.id}}"
+        ,
+        value="doneList"
+        name="createItem"
+      />{{item.text}}
+    </li>
+    {% endif %} {% endfor %}
+  </ul>
+  <button type="submit" , name="save" , value="save">Save ToDoList</button>
+  <input type="text" , name="createItem" />
+  <button type="submit" , name="addItem" , value="addItem">Add item</button>
+</form>
 
 {% endblock %}

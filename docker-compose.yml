@@ -11,11 +11,18 @@ services:
             - POSTGRES_USER=django_practice_01
             - POSTGRES_DB=django_practice_01
             - POSTGRES_PASSWORD=django_practice_01
+        ports:
+            - '5432:5432'
     web:
         build: ./web
+        tty: true 
+        #stdin_open: true
         container_name: django_practice_01_web
         restart: always
-        command: [ "../wait-for-it.sh", "db:5432", "--", "/bin/bash", "-c", "uwsgi --ini uwsgi.ini" ]
+        #entrypoint: 
+            #- /bin/bash
+            #- docker-entrypoint.sh
+        #command: /bin/bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py migrate --run-syncdb && uwsgi --ini uwsgi.ini && python3 manage.py collectnews"
         volumes:
             # Using for production that could share the named volume for other services.
             - web_data:/web/django_practice_01
@@ -23,7 +30,10 @@ services:
             - PYTHONUNBUFFERED=TRUE
             - DATABASE_NAME=django_practice_01
             - DATABASE_USER=django_practice_01
+            - DATABASE_PASSWORD=django_practice_01
             - DB_HOST=db
+        depends_on:
+            - db
     nginx:
         build: ./nginx
         container_name: django_practice_01_nginx

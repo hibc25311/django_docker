@@ -1,25 +1,28 @@
-{% extends 'nbanews/base.html' %}
-{% block title %}nba news{% endblock %}
+{% extends 'nbanews/base.html' %} {% block title %}nba news{% endblock %}
+{%block content %}
+<form method="POST" action="#">
+  {% csrf_token %}
+  <button type="submit" , name="collectNews" , value="collectNews">
+    Collect News
+  </button>
+</form>
+<h1>
+  <a href="https://t.me/+CwbGaYTsE55kZDk1" title="Join Telegram"
+    >Join telegram to receive news</a
+  >
+</h1>
 
-{% block content %}
-   <form method="POST" action="#">
-      {% csrf_token %}
-      <button type="submit", name="collectNews", value="collectNews">Collect News</button>
-   </form>
-   <h1><a href='https://t.me/+CwbGaYTsE55kZDk1' title="Join Telegram">Join telegram to receive news</a></h1>
+<form method="POST" action="#">
+  {% csrf_token %}
+  <ul>
+    {% for news in last_ten_news %}
+    <li>
+      <a href="{{news.url}}" title="{{news.title}}" target="_blank"
+        >{{news.title}}</a
+      >
+    </li>
+    {% endfor %}
+  </ul>
+</form>
 
-
-
-
-   
-      <form method="POST" action="#">
-         {% csrf_token %}
-         <ul>
-            {% for news in last_ten_news %}
-            <li><a href="{{news.url}}" title="{{news.title}}" target="_blank">{{news.title}}</a></li>
-            {% endfor %}
-         </ul>
-                  
-      </form>
-   
 {% endblock %}

@@ -1,23 +1,33 @@
 from django.shortcuts import render
 from nbanews.models import NbaNews
-from apscheduler.schedulers.background import BackgroundScheduler
-from django_apscheduler.jobstores import DjangoJobStore, register_events
-from nbanews.beautifulsoup import collectNews
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 
+from rest_framework import generics
+from rest_framework.views import APIView
+from .serializers import NbaNewsSerializer
 # Create your views here.
+
+
 def index(request):
     return HttpResponse("I am Django 3.1 !!!")
+
 
 def nbanews(request):
     last_ten_news = NbaNews.objects.all().order_by('-id')[:10]
 
-    return render(request, 'nbanews/nbanews.html', {'last_ten_news':last_ten_news})
+    return render(request, 'nbanews/nbanews.html',
+                  {'last_ten_news': last_ten_news})
 
 
-scheduler = BackgroundScheduler(timezone='Asia/Taipei')
-scheduler.add_jobstore(DjangoJobStore(), 'default')
-scheduler.add_job(collectNews, 'interval', seconds=10, id='collectNews', replace_existing=True)
-register_events(scheduler)
-scheduler.start()
-print('scheduler started')
+# generic class-based views
+class NbaNewsList(generics.ListCreateAPIView):
+    queryset = NbaNews.objects.all()
+    serializer_class = NbaNewsSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+class NbaNewsDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = NbaNews.objects.all()
+    serializer_class = NbaNewsSerializer
